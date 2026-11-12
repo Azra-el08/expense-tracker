@@ -1,17 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TransactionContext from "./TransactionContext";
-import {
-  dummyBudgets,
-  dummyCategories,
-  dummyTransactions,
-} from "../data/dummyData";
+import { dummyCategories } from "../data/dummyData";
+import { KEYS, readJSON, writeJSON } from "../utils/storage";
 
-// For now this one provider holds ALL the app's data.
+// A new account starts with the default categories and nothing else.
+function loadInitialData(userId) {
+  const saved = readJSON(KEYS.data(userId), null);
+  return {
+    transactions: saved?.transactions ?? [],
+    categories: saved?.categories ?? dummyCategories,
+    budgets: saved?.budgets ?? [],
+  };
+}
+
+// Holds ONE account's data. ProtectedRoute gives it key={userId}, so switching
+// accounts remounts this provider and loads the other account's data.
 // When we connect the API, each part will move into its own service.
-function TransactionProvider({ children }) {
-  const [transactions, setTransactions] = useState(dummyTransactions);
-  const [categories, setCategories] = useState(dummyCategories);
-  const [budgets, setBudgets] = useState(dummyBudgets);
+function TransactionProvider({ userId, children }) {
+  const [initial] = useState(() => loadInitialData(userId));
+  const [transactions, setTransactions] = useState(initial.transactions);
+  const [categories, setCategories] = useState(initial.categories);
+  const [budgets, setBudgets] = useState(initial.budgets);
+
+  // Save this account's data whenever anything changes
+  useEffect(() => {
+    writeJSON(KEYS.data(userId), { transactions, categories, budgets });
+  }, [userId, transactions, categories, budgets]);
 
   // ----- Transactions -----
   const addTransaction = (data) => {
@@ -28,6 +42,8 @@ function TransactionProvider({ children }) {
   const deleteTransaction = (id) => {
     setTransactions((prev) => prev.filter((t) => t.transaction_id !== id));
   };
+
+  const deleteAllTransactions = () => setTransactions([]);
 
   // ----- Categories -----
   const addCategory = (data) => {
@@ -72,6 +88,7 @@ function TransactionProvider({ children }) {
     addTransaction,
     updateTransaction,
     deleteTransaction,
+    deleteAllTransactions,
     addCategory,
     updateCategory,
     deleteCategory,

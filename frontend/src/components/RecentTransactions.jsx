@@ -14,7 +14,7 @@ function RecentTransactions({ transactions, categories }) {
       </div>
 
       {transactions.length === 0 ? (
-        <p className="muted">No transactions yet.</p>
+        <p className="muted">Nothing here yet. Add a transaction and it shows up first.</p>
       ) : (
         <ul className="category-list">
           {transactions.map((t) => {

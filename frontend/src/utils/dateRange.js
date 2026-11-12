@@ -12,6 +12,11 @@ export function getRange(period, today = new Date()) {
   const y = today.getFullYear();
   const m = today.getMonth();
 
+  if (period === "day") {
+    const iso = toISODate(today);
+    return { start: iso, end: iso };
+  }
+
   if (period === "week") {
     const daysSinceMonday = (today.getDay() + 6) % 7; // Monday = 0 ... Sunday = 6
     const start = new Date(y, m, today.getDate() - daysSinceMonday);
@@ -36,6 +41,9 @@ export function getRangeLabel(period, range) {
   const format = (dateString, options) =>
     new Date(dateString + "T00:00:00").toLocaleDateString("en-PH", options);
 
+  if (period === "day") {
+    return format(range.start, { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+  }
   if (period === "week") {
     const from = format(range.start, { month: "short", day: "numeric" });
     const to = format(range.end, { month: "short", day: "numeric", year: "numeric" });
@@ -86,4 +94,16 @@ export function buildBuckets(period, range) {
   }
 
   return buckets;
+}
+
+// Moves the anchor date one step: a day, a week, or a month (direction is -1 or 1)
+export function shiftAnchor(anchor, period, direction) {
+  const date = new Date(anchor + "T00:00:00");
+
+  if (period === "month") {
+    return toISODate(new Date(date.getFullYear(), date.getMonth() + direction, 1));
+  }
+
+  const days = period === "week" ? 7 : 1;
+  return toISODate(new Date(date.getFullYear(), date.getMonth(), date.getDate() + direction * days));
 }

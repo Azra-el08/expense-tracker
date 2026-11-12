@@ -3,7 +3,7 @@ import { formatCurrency } from "../utils/format";
 
 function CategoryBreakdown({ data }) {
   if (data.length === 0) {
-    return <p className="muted chart-empty">No expenses in this period.</p>;
+    return <p className="muted chart-empty">No spending in this period. Nice and quiet.</p>;
   }
 
   return (
@@ -23,7 +23,16 @@ function CategoryBreakdown({ data }) {
               <Cell key={item.name} fill={item.color} />
             ))}
           </Pie>
-          <Tooltip formatter={(value) => formatCurrency(value)} />
+          <Tooltip
+            formatter={(value) => formatCurrency(value)}
+            contentStyle={{
+              background: "var(--surface)",
+              border: "1.5px solid var(--edge)",
+              borderRadius: 10,
+              color: "var(--ink)",
+            }}
+            itemStyle={{ color: "var(--ink)" }}
+          />
         </PieChart>
       </ResponsiveContainer>
 

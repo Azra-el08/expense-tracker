@@ -5,7 +5,7 @@ import CategoryForm from "../components/CategoryForm";
 import CategorySection from "../components/CategorySection";
 import useTransactions from "../hooks/useTransactions";
 
-const DEFAULT_COLOR = "#3b82f6";
+const DEFAULT_COLOR = "#d9a21b";
 
 function Categories() {
   const { categories, transactions, addCategory, updateCategory, deleteCategory } =

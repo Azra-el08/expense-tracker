@@ -36,9 +36,9 @@ function BudgetCard({ title, color, limit, spent, onEdit, onDelete }) {
       <ProgressBar percent={percent} status={status} />
 
       <p className={"budget-note status-text-" + status}>
-        {status === "exceeded" && `Over budget by ${formatCurrency(Math.abs(remaining))}`}
+        {status === "exceeded" && `Over by ${formatCurrency(Math.abs(remaining))}. Ouch.`}
         {status === "warning" && `Close to the limit: ${formatCurrency(remaining)} left`}
-        {status === "ok" && `${formatCurrency(remaining)} remaining`}
+        {status === "ok" && `${formatCurrency(remaining)} left to spend`}
       </p>
     </div>
   );

@@ -7,6 +7,8 @@ import CategoryBreakdown from "../components/CategoryBreakdown";
 import RecentTransactions from "../components/RecentTransactions";
 import ProgressBar from "../components/ProgressBar";
 import useTransactions from "../hooks/useTransactions";
+import useAuth from "../hooks/useAuth";
+import { getFirstName, getGreeting } from "../utils/profile";
 import { buildBuckets, getRange, getRangeLabel, isInRange } from "../utils/dateRange";
 import {
   buildCategoryBreakdown,
@@ -19,6 +21,7 @@ import { formatMonth, getBudgetStatus, getCurrentMonth } from "../utils/budget";
 
 function Dashboard() {
   const { transactions, categories, budgets } = useTransactions();
+  const { user } = useAuth();
   const [period, setPeriod] = useState("month"); // "week" | "month" | "year"
 
   // ----- Everything below is derived from the data and the selected period -----
@@ -65,9 +68,22 @@ function Dashboard() {
   const remaining = budgetLimit - monthSpent;
   const budgetPercent = budgetLimit > 0 ? (monthSpent / budgetLimit) * 100 : 0;
 
+  // A greeting that reacts to how the month is going
+  const greeting = useMemo(() => getGreeting(), []);
+  let subtitle = "Here is where your money went.";
+  if (transactions.length === 0) {
+    subtitle = "Nothing recorded yet. Add your first transaction to get started.";
+  } else if (overallBudget && budgetPercent >= 100) {
+    subtitle = "You have gone past this month's budget. Time to ease off.";
+  } else if (overallBudget && budgetPercent >= 80) {
+    subtitle = "Getting close to this month's limit. Spend with care.";
+  } else if (overallBudget) {
+    subtitle = "You are on track this month. Keep it up.";
+  }
+
   return (
     <>
-      <PageHeader title="Dashboard" subtitle="Your financial overview at a glance." />
+      <PageHeader title={`${greeting}, ${getFirstName(user.name)}`} subtitle={subtitle} />
 
       <div className="dashboard-bar">
         <PeriodFilter value={period} onChange={setPeriod} />

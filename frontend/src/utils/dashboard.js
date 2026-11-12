@@ -1,9 +1,13 @@
 // Temporary frontend calculations. From Stage 10 the PHP API will return these numbers.
 
-export const chartColors = {
-  income: "#16a34a",
-  expense: "#ef4444",
+const chartPalettes = {
+  light: { income: "#23784a", expense: "#cf4527" },
+  dark: { income: "#58c486", expense: "#ff7f5c" },
 };
+
+export function getChartColors(theme) {
+  return chartPalettes[theme] ?? chartPalettes.light;
+}
 
 // Avoids tiny floating-point errors such as 0.1 + 0.2 = 0.30000000000000004
 const round2 = (n) => Math.round(n * 100) / 100;

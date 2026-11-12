@@ -1,9 +1,9 @@
 import { formatCurrency, formatDate, getPaymentLabel } from "../utils/format";
 
-function TransactionTable({ transactions, categories, onEdit, onDelete }) {
+function TransactionTable({ transactions, categories, onEdit, onDelete, emptyMessage = "No transactions found." }) {
   // Empty state: show a friendly message instead of an empty table
   if (transactions.length === 0) {
-    return <div className="card empty-state">No transactions found.</div>;
+    return <div className="card empty-state">{emptyMessage}</div>;
   }
 
   const getCategory = (id) => categories.find((c) => c.category_id === id);
